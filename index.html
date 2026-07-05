@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>The Supply List — Best School Gear, Ranked</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFBF2;
+    --paper-2:#FFF3D6;
+    --rule-blue:#BFD9F7;
+    --margin-red:#FF6B6B;
+    --ink:#2B2D42;
+    --ink-soft:#5B5E7E;
+    --highlighter:#FFE066;
+    --highlighter-2:#FFD93D;
+    --marker-green:#2FBF71;
+    --marker-purple:#9B6BFF;
+    --marker-orange:#FF8B3D;
+    --marker-blue:#4EA1F7;
+    --marker-pink:#FF6FA5;
+    --card-shadow: 0 10px 24px rgba(43,45,66,0.12);
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  .paper-bg{
+    position:fixed; inset:0; z-index:-3;
+    background-color:var(--paper);
+    background-image:
+      repeating-linear-gradient(var(--paper) 0px, var(--paper) 34px, var(--rule-blue) 35px),
+      linear-gradient(90deg, transparent 0 78px, var(--margin-red) 78px, var(--margin-red) 80px, transparent 80px);
+    background-repeat: repeat-y, no-repeat;
+    background-size: 100% 35px, 100% 100%;
+    opacity:0.5;
+  }
+  @media (max-width: 700px){
+    .paper-bg{ background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 34px, var(--rule-blue) 35px); }
+  }
+
+  #emoji-layer{ position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden; }
+  .float-emoji{ position:absolute; opacity:0.4; will-change:transform; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08)); }
+
+  #confetti-canvas{ position:fixed; inset:0; z-index:999; pointer-events:none; }
+
+  a{ color:inherit; }
+
+  /* ===== Sound control bar ===== */
+  .control-bar{
+    position:fixed;
+    top:14px; right:14px;
+    z-index:50;
+    display:flex;
+    gap:8px;
+  }
+  .icon-btn{
+    width:48px; height:48px;
+    border-radius:50%;
+    border:3px solid var(--ink);
+    background:#fff;
+    font-size:1.3rem;
+    cursor:pointer;
+    box-shadow: 3px 3px 0 rgba(43,45,66,0.2);
+    transition: transform .15s ease;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn:hover{ transform:scale(1.1) rotate(-6deg); }
+  .icon-btn:active{ transform:scale(0.92); }
+  .icon-btn.active{ background:var(--highlighter-2); }
+
+  /* ===== Mascot ===== */
+  #mascot{
+    position:fixed;
+    width:64px; height:64px;
+    z-index:40;
+    pointer-events:none;
+    transition: opacity .3s ease;
+  }
+  #mascot-bubble{
+    position:fixed;
+    z-index:41;
+    background:#fff;
+    border:2.5px solid var(--ink);
+    border-radius:14px;
+    padding:8px 14px;
+    font-family:'Kalam', cursive;
+    font-size:0.85rem;
+    font-weight:700;
+    max-width:190px;
+    opacity:0;
+    transition: opacity .4s ease;
+    pointer-events:none;
+    box-shadow: 3px 3px 0 rgba(43,45,66,0.15);
+  }
+  #mascot-bubble.show{ opacity:1; }
+
+  /* ===== Header ===== */
+  header{ position:relative; padding: 90px 20px 60px; text-align:center; max-width:1000px; margin:0 auto; }
+  .eyebrow{
+    display:inline-block; font-family:'Kalam', cursive; background:var(--highlighter);
+    padding:6px 16px; border-radius:3px; transform:rotate(-2deg); font-size:0.95rem;
+    font-weight:700; box-shadow: 2px 3px 0 rgba(0,0,0,0.08); margin-bottom:22px;
+    animation: pop-in 0.6s ease both;
+  }
+  h1{
+    font-family:'Caveat', cursive;
+    font-size:clamp(2.6rem, 9vw, 5.5rem);
+    line-height:1.05;
+    margin:0 0 18px;
+    color:var(--ink);
+  }
+  h1 span.letter{ display:inline-block; animation: letter-bounce 0.7s cubic-bezier(.34,1.56,.64,1) both; }
+  h1 .highlight, h1 .highlight .letter{
+    position:relative;
+    background: linear-gradient(90deg, var(--marker-purple), var(--marker-pink), var(--marker-orange), var(--marker-purple));
+    background-size: 300% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  h1 .highlight{ animation: rainbow-shift 6s linear infinite; }
+  h1 .highlight .letter{ animation: letter-bounce 0.7s cubic-bezier(.34,1.56,.64,1) both, rainbow-shift 6s linear infinite; }
+  @keyframes rainbow-shift{ to{ background-position: 300% 0; } }
+  @keyframes letter-bounce{
+    0%{ transform:translateY(-40px) rotate(-10deg); opacity:0; }
+    100%{ transform:translateY(0) rotate(0); opacity:1; }
+  }
+  @keyframes pop-in{
+    0%{ transform:scale(0) rotate(-10deg); opacity:0; }
+    70%{ transform:scale(1.15) rotate(-2deg); }
+    100%{ transform:scale(1) rotate(-2deg); opacity:1; }
+  }
+
+  header p.sub{ font-size:1.15rem; color:var(--ink-soft); max-width:640px; margin:0 auto; font-weight:600; }
+
+  .backpack-hero{ margin: 40px auto 0; width: 130px; height: 130px; cursor:pointer; }
+  .wave-wrap{ line-height:0; margin-top:16px; }
+  .wave-wrap svg{ display:block; width:100%; height:60px; }
+
+  /* ===== Nav tabs ===== */
+  nav.tabs{
+    position:sticky; top:0; z-index:20;
+    background:rgba(255,251,242,0.94);
+    backdrop-filter:blur(6px);
+    border-bottom:3px solid var(--ink);
+    padding:12px 10px;
+    display:flex; gap:10px; justify-content:flex-start;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  @media (min-width: 720px){ nav.tabs{ justify-content:center; flex-wrap:wrap; overflow:visible; } }
+
+  .tab-btn{
+    font-family:'Kalam', cursive; font-size:1rem; font-weight:700;
+    background:var(--paper-2); border:2.5px solid var(--ink); border-radius:12px 12px 4px 4px;
+    padding:11px 18px; cursor:pointer; color:var(--ink); white-space:nowrap;
+    transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+    box-shadow: 3px 3px 0 rgba(43,45,66,0.18);
+    flex-shrink:0;
+    min-height:44px;
+  }
+  .tab-btn:hover{ transform:translateY(-2px) rotate(-1deg); box-shadow: 4px 5px 0 rgba(43,45,66,0.22); }
+  .tab-btn:active{ transform:translateY(1px); box-shadow: 1px 1px 0 rgba(43,45,66,0.22); }
+  .tab-btn.active{ background:var(--marker-purple); color:#fff; border-color:var(--marker-purple); animation: wiggle 0.5s ease; }
+  @keyframes wiggle{ 0%,100%{transform:rotate(0);} 25%{transform:rotate(-4deg);} 75%{transform:rotate(4deg);} }
+
+  /* ===== Sections ===== */
+  main{ max-width:1220px; margin:0 auto; padding: 46px 16px 40px; }
+  .category-section{ margin-bottom:66px; scroll-margin-top:90px; }
+  .category-heading{ display:flex; align-items:baseline; gap:14px; margin-bottom:6px; flex-wrap:wrap; }
+  .category-heading h2{ font-family:'Caveat', cursive; font-size:2.6rem; margin:0; }
+  .category-heading .count-tag{
+    font-family:'Nunito'; font-weight:800; font-size:0.78rem; background:var(--ink); color:var(--paper);
+    padding:4px 10px; border-radius:20px;
+  }
+  .category-desc{ color:var(--ink-soft); font-weight:600; margin:0 0 24px; max-width:700px; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:22px; }
+  @media (max-width:480px){ .grid{ grid-template-columns:1fr; } }
+
+  /* ===== Product Card ===== */
+  .card{
+    background:#fff; border:2.5px solid var(--ink); border-radius:16px; padding:20px;
+    position:relative; box-shadow:var(--card-shadow); display:flex; flex-direction:column;
+    transition: transform .25s ease, box-shadow .25s ease;
+    opacity:0; transform:translateY(24px) scale(0.96);
+  }
+  .card.in-view{ opacity:1; transform:translateY(0) scale(1); }
+  .card:hover{ transform:translateY(-6px) rotate(-0.6deg) scale(1.015); box-shadow: 0 18px 32px rgba(43,45,66,0.2); }
+  .pin{
+    position:absolute; top:-10px; left:20px; width:20px; height:20px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #ff8a80, var(--margin-red));
+    box-shadow:0 3px 4px rgba(0,0,0,0.25);
+  }
+  .fave-btn{
+    position:absolute; top:10px; right:10px; z-index:2;
+    width:38px; height:38px; border-radius:50%; border:2px solid var(--ink);
+    background:#fff; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;
+    transition: transform .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .fave-btn.faved{ background:var(--marker-pink); animation: heart-pop .4s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes heart-pop{ 0%{transform:scale(0.7);} 60%{transform:scale(1.3);} 100%{transform:scale(1);} }
+
+  .icon-wrap{
+    width:100%; height:150px; display:flex; align-items:center; justify-content:center;
+    background:var(--paper-2); border-radius:12px; margin-bottom:14px;
+    border:2px dashed rgba(43,45,66,0.15); overflow:hidden; position:relative;
+  }
+  .icon-wrap svg{ width:88px; height:88px; transition: transform .3s ease; }
+  .card:hover .icon-wrap svg{ transform: scale(1.08) rotate(-3deg); }
+  .icon-wrap img{ width:100%; height:100%; object-fit:contain; padding:8px; }
+
+  .card h3{ font-family:'Kalam', cursive; font-size:1.22rem; margin:0 0 6px; padding-right:30px; }
+  .meta-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
+  .price{ font-weight:800; font-size:1.15rem; color:var(--marker-purple); }
+  .stars{ display:flex; align-items:center; gap:3px; font-size:0.8rem; color:var(--ink-soft); font-weight:700; flex-wrap:wrap; }
+  .stars svg{ width:14px; height:14px; }
+
+  .desc{ font-size:0.92rem; color:var(--ink-soft); line-height:1.5; margin:0 0 12px; font-weight:600; }
+  .why-box{ background:var(--highlighter); border-radius:8px; padding:10px 12px; font-size:0.83rem; font-weight:700; margin-bottom:14px; }
+  .why-box b{ display:block; font-family:'Kalam', cursive; font-size:0.93rem; margin-bottom:2px; }
+
+  .buy-btn{
+    margin-top:auto; position:relative; overflow:hidden; background:var(--ink); color:var(--paper);
+    border:none; padding:13px 18px; border-radius:10px; font-weight:800; font-size:0.95rem;
+    cursor:pointer; text-decoration:none; text-align:center; display:inline-block;
+    transition: transform .15s ease; min-height:44px;
+  }
+  .buy-btn::before{
+    content:""; position:absolute; top:0; left:-75%; width:50%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+    transform:skewX(-20deg); transition:left .5s ease;
+  }
+  .buy-btn:hover::before{ left:125%; }
+  .buy-btn:hover{ transform:translateY(-2px) scale(1.02); }
+  .buy-btn:active{ transform:translateY(1px) scale(0.97); }
+
+  .note{
+    max-width:900px; margin: 10px auto 50px; padding:16px 20px; background:var(--paper-2);
+    border:2px dashed var(--ink-soft); border-radius:12px; font-size:0.83rem; color:var(--ink-soft);
+    font-weight:600; text-align:center;
+  }
+  footer{ text-align:center; padding:36px 20px 90px; font-family:'Kalam', cursive; color:var(--ink-soft); }
+
+  ::selection{ background:var(--highlighter); }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="paper-bg"></div>
+<div id="emoji-layer"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="control-bar">
+  <button class="icon-btn" id="sfxToggle" title="Sound effects">🔇</button>
+  <button class="icon-btn" id="musicToggle" title="Background music">🎵</button>
+</div>
+
+<audio id="bgAudio" loop preload="none"><source src="audio/recall.mp3" type="audio/mpeg"></audio>
+<img id="mascot" src="" alt="">
+<div id="mascot-bubble"></div>
+
+<header>
+  <span class="eyebrow">📌 Hand-picked · Fall semester edition</span>
+  <h1 id="heroTitle"></h1>
+  <p class="sub">Twenty staples worth buying, sorted into four categories, with real pros, real prices, and zero mystery about why they made the cut.</p>
+
+  <svg class="backpack-hero" viewBox="0 0 100 100" id="heroBackpack">
+    <g>
+      <path d="M30 40 Q30 22 50 22 Q70 22 70 40 L70 45 L30 45 Z" fill="#2FBF71" stroke="#2B2D42" stroke-width="2.5"/>
+      <rect x="24" y="42" width="52" height="46" rx="12" fill="#9B6BFF" stroke="#2B2D42" stroke-width="2.5"/>
+      <rect x="38" y="52" width="24" height="20" rx="4" fill="#FFD93D" stroke="#2B2D42" stroke-width="2"/>
+      <path d="M34 42 L34 30" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/>
+      <path d="M66 42 L66 30" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="50" cy="80" r="4" fill="#FF6B6B" stroke="#2B2D42" stroke-width="2"/>
+    </g>
+  </svg>
+
+  <div class="wave-wrap">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+      <path id="wavePath" d="M0 30 Q 150 0 300 30 T 600 30 T 900 30 T 1200 30" fill="none" stroke="#2B2D42" stroke-width="2.5" stroke-dasharray="6 6"/>
+    </svg>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-filter="all">🗂️ All</button>
+  <button class="tab-btn" data-filter="backpacks">🎒 Backpacks</button>
+  <button class="tab-btn" data-filter="writing">✏️ Writing Tools</button>
+  <button class="tab-btn" data-filter="art">🎨 Art Supplies</button>
+  <button class="tab-btn" data-filter="tech">💻 Tech</button>
+  <button class="tab-btn" id="favesTab" data-filter="faves">⭐ My Favorites</button>
+</nav>
+
+<main>
+  <section class="category-section" data-cat="backpacks">
+    <div class="category-heading"><h2 style="color:var(--marker-green)">Backpacks</h2><span class="count-tag">5 picks</span></div>
+    <p class="category-desc">The bag has to survive a full year of being thrown on floors, stuffed with textbooks, and rained on.</p>
+    <div class="grid"></div>
+  </section>
+
+  <section class="category-section" data-cat="writing">
+    <div class="category-heading"><h2 style="color:var(--marker-blue)">Writing Tools</h2><span class="count-tag">5 picks</span></div>
+    <p class="category-desc">Pens and pencils students actually reach for again instead of losing after one class.</p>
+    <div class="grid"></div>
+  </section>
+
+  <section class="category-section" data-cat="art">
+    <div class="category-heading"><h2 style="color:var(--marker-orange)">Art Supplies</h2><span class="count-tag">5 picks</span></div>
+    <p class="category-desc">For studio classes, sketchbooks, and projects that need color that actually blends and layers well.</p>
+    <div class="grid"></div>
+  </section>
+
+  <section class="category-section" data-cat="tech">
+    <div class="category-heading"><h2 style="color:var(--marker-purple)">Tech Devices</h2><span class="count-tag">5 picks</span></div>
+    <p class="category-desc">The devices that pull their weight in lecture halls, libraries, and late-night study sessions.</p>
+    <div class="grid"></div>
+  </section>
+
+  <section class="category-section" data-cat="faves" id="favesSection" style="display:none;">
+    <div class="category-heading"><h2 style="color:var(--marker-pink)">My Favorites</h2></div>
+    <p class="category-desc">Tap the ⭐ on any card to save it here.</p>
+    <div class="grid" id="favesGrid"></div>
+    <p id="noFaves" style="color:var(--ink-soft); font-weight:700; display:none;">Nothing saved yet — go tap some stars! ⭐</p>
+  </section>
+
+  <div class="note">
+    Photos: this file looks for a real photo at <code>img/&lt;product-id&gt;.jpg</code> for each item first (drop your own downloaded photos in an <code>img</code> folder next to this file, using the ids printed in the page source), and automatically falls back to the illustration if no photo is found. Music: the 🎵 button plays "Recall" by gabriawll (NCS Release), packed directly into this file. Prices/ratings are approximate, rounded figures — always check the live Amazon price before buying. "Find it on Amazon" buttons link to a live search for that exact product.
+  </div>
+</main>
+
+<footer>made with 📎 paperclips and mild academic anxiety</footer>
+
+<script>
+/* ================= Sound engine (Web Audio API, fully synthesized — no external files) ================= */
+let audioCtx = null;
+let sfxOn = false;
+let musicOn = false;
+const bgAudio = document.getElementById('bgAudio');
+bgAudio.volume = 0.35;
+
+function ensureCtx(){
+  if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playTone(freq, duration, type='sine', gainVal=0.15, delay=0){
+  if(!sfxOn && !musicOn) return;
+  const ctx = ensureCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.value = gainVal;
+  osc.connect(gain); gain.connect(ctx.destination);
+  const t = ctx.currentTime + delay;
+  gain.gain.setValueAtTime(gainVal, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  osc.start(t);
+  osc.stop(t + duration + 0.02);
+}
+
+function sfxClick(){ if(sfxOn){ playTone(660, 0.08, 'triangle', 0.12); } }
+function sfxPop(){ if(sfxOn){ playTone(880, 0.1, 'sine', 0.15); playTone(1320, 0.12, 'sine', 0.1, 0.05); } }
+function sfxSuccess(){ if(sfxOn){ [523,659,784,1047].forEach((f,i)=>playTone(f,0.16,'triangle',0.13,i*0.08)); } }
+
+const sfxBtn = document.getElementById('sfxToggle');
+const musicBtn = document.getElementById('musicToggle');
+sfxBtn.addEventListener('click', ()=>{
+  ensureCtx();
+  sfxOn = !sfxOn;
+  sfxBtn.textContent = sfxOn ? '🔊' : '🔇';
+  sfxBtn.classList.toggle('active', sfxOn);
+  if(sfxOn) sfxPop();
+});
+musicBtn.addEventListener('click', ()=>{
+  musicOn = !musicOn;
+  musicBtn.classList.toggle('active', musicOn);
+  musicBtn.textContent = musicOn ? '🎶' : '🎵';
+  if(musicOn){
+    bgAudio.play().catch(()=>{ musicOn = false; musicBtn.classList.remove('active'); musicBtn.textContent = '🎵'; });
+  } else {
+    bgAudio.pause();
+  }
+});
+
+/* ================= Confetti ================= */
+const confettiCanvas = document.getElementById('confetti-canvas');
+const cctx = confettiCanvas.getContext('2d');
+function resizeCanvas(){ confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+let confettiParticles = [];
+const confettiColors = ['#FF6B6B','#FFD93D','#2FBF71','#4EA1F7','#9B6BFF','#FF8B3D','#FF6FA5'];
+function burstConfetti(x, y){
+  for(let i=0;i<38;i++){
+    confettiParticles.push({
+      x, y,
+      vx: (Math.random()-0.5)*8,
+      vy: (Math.random()*-8)-3,
+      size: 5+Math.random()*5,
+      color: confettiColors[Math.floor(Math.random()*confettiColors.length)],
+      rot: Math.random()*Math.PI*2,
+      vr: (Math.random()-0.5)*0.3,
+      life:0
+    });
+  }
+}
+function confettiLoop(){
+  cctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+  confettiParticles.forEach(p=>{
+    p.vy += 0.28; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+    cctx.save();
+    cctx.translate(p.x, p.y); cctx.rotate(p.rot);
+    cctx.fillStyle = p.color;
+    cctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+    cctx.restore();
+  });
+  confettiParticles = confettiParticles.filter(p=>p.life < 140 && p.y < confettiCanvas.height+40);
+  requestAnimationFrame(confettiLoop);
+}
+requestAnimationFrame(confettiLoop);
+
+/* ================= Hero title letter animation ================= */
+const heroTitle = document.getElementById('heroTitle');
+heroTitle.innerHTML =
+  "The Supply List".split('').map((ch,i)=>`<span class="letter" style="animation-delay:${i*0.03}s">${ch===' '?'&nbsp;':ch}</span>`).join('') +
+  '<br>' +
+  "that actually ".split('').map((ch,i)=>`<span class="letter" style="animation-delay:${(15+i)*0.03}s">${ch===' '?'&nbsp;':ch}</span>`).join('') +
+  '<span class="highlight">' + "holds up.".split('').map((ch,i)=>`<span class="letter" style="animation-delay:${(29+i)*0.03}s">${ch===' '?'&nbsp;':ch}</span>`).join('') + '</span>';
+
+/* ================= Product data (5 per category) ================= */
+const products = [
+  // BACKPACKS
+  { id:"backpack-jansport-right-pack", cat:"backpacks", title:"JanSport Right Pack Backpack", price:"$54.99", rating:4.8, reviews:"7K+ bought this month",
+    desc:"The classic suede-bottom daypack with a padded 15\" laptop sleeve and a front organizer pocket.",
+    why:"Survives four years of hallway abuse without the seams giving out.", icon:"backpack", color:"#2FBF71" },
+  { id:"backpack-fjallraven-kanken", cat:"backpacks", title:"Fjällräven Kånken Classic", price:"$90.00", rating:4.8, reviews:"Cult favorite",
+    desc:"A boxy, water-resistant backpack with wide shoulder straps and one roomy main compartment.",
+    why:"Distributes weight evenly — matters when you carry it six hours a day.", icon:"kanken", color:"#FF8B3D" },
+  { id:"backpack-highsierra-swerve", cat:"backpacks", title:"High Sierra Swerve Backpack", price:"$39.99", rating:4.6, reviews:"Budget favorite",
+    desc:"Padded laptop compartment, mesh side pockets, and a tablet sleeve at a friendly price.",
+    why:"Best value-per-dollar pick if you need something solid without the premium tag.", icon:"backpack2", color:"#9B6BFF" },
+  { id:"backpack-underarmour-hustle", cat:"backpacks", title:"Under Armour Hustle Backpack", price:"$44.99", rating:4.7, reviews:"Sporty pick",
+    desc:"Water-resistant fabric, a padded laptop sleeve, and a roomy main compartment built for daily wear.",
+    why:"Tough exterior fabric shrugs off rain on the walk to class.", icon:"backpack3", color:"#4EA1F7" },
+  { id:"backpack-adidas-excel", cat:"backpacks", title:"Adidas Excel Backpack", price:"$37.99", rating:4.6, reviews:"Lightweight favorite",
+    desc:"A lighter-weight daypack with a dedicated laptop sleeve and a front zip pocket for small items.",
+    why:"Lighter empty weight means less strain when it's already full of textbooks.", icon:"backpack4", color:"#FF6FA5" },
+
+  // WRITING TOOLS
+  { id:"writing-pilot-g2", cat:"writing", title:"Pilot G2 Premium Gel Pens (12-pack)", price:"$13.99", rating:4.8, reviews:"Best-selling pen in the US",
+    desc:"Smooth gel ink in a retractable barrel that doesn't skip on cheap notebook paper.",
+    why:"Ink flows so smoothly that long note-taking sessions don't cramp your hand.", icon:"pen", color:"#2FBF71" },
+  { id:"writing-ticonderoga", cat:"writing", title:"Ticonderoga Pencils (30-pack)", price:"$9.99", rating:4.8, reviews:"Classroom standard",
+    desc:"Pre-sharpened #2 pencils with a smudge-resistant eraser — the scantron favorite.",
+    why:"Required for most standardized tests; graphite reads cleanly on optical scanners.", icon:"pencil", color:"#FF8B3D" },
+  { id:"writing-pentel-energel", cat:"writing", title:"Pentel EnerGel Deluxe Pens", price:"$10.49", rating:4.7, reviews:"Editor favorite",
+    desc:"Liquid gel ink with a metal tip for control that dries fast to avoid smearing.",
+    why:"Fast-drying ink is a lifesaver for left-handed students.", icon:"pen2", color:"#9B6BFF" },
+  { id:"writing-papermate-mech", cat:"writing", title:"Paper Mate Mechanical Pencils (5-pack)", price:"$6.99", rating:4.7, reviews:"No-sharpener-needed pick",
+    desc:"0.7mm mechanical pencils with a comfort grip and built-in eraser — never needs a sharpener.",
+    why:"One consistent point width means neater handwriting all semester.", icon:"mechpencil", color:"#4EA1F7" },
+  { id:"writing-bic-roundstic", cat:"writing", title:"BIC Round Stic Ballpoint Pens (60-pack)", price:"$8.99", rating:4.8, reviews:"Best bulk value",
+    desc:"The reliable everyday ballpoint, sold in bulk so you're never digging for a working pen.",
+    why:"Cheap enough to lend one to every classmate who forgot theirs.", icon:"pens60", color:"#FF6FA5" },
+
+  // ART SUPPLIES
+  { id:"art-crayola-colored-pencils", cat:"art", title:"Crayola Colored Pencils (50-count)", price:"$12.99", rating:4.8, reviews:"Most gifted art set",
+    desc:"Fifty pre-sharpened, break-resistant colored pencils with strong pigment payoff.",
+    why:"Wide color range covers art assignments without buying singles.", icon:"pencils", color:"#2FBF71" },
+  { id:"art-prismacolor-premier", cat:"art", title:"Prismacolor Premier Colored Pencils (24)", price:"$21.99", rating:4.8, reviews:"Studio-grade pick",
+    desc:"Soft, thick cores that blend and layer smoothly for illustration and studio classes.",
+    why:"The soft wax core blends exactly the way portfolio-level work needs.", icon:"pencils2", color:"#FF8B3D" },
+  { id:"art-sharpie-markers", cat:"art", title:"Sharpie Permanent Markers (24-pack)", price:"$18.99", rating:4.8, reviews:"Everyday essential",
+    desc:"Fine-point permanent markers in assorted colors for posters and diagrams.",
+    why:"Fade-resistant ink means poster projects survive the trip across campus.", icon:"marker", color:"#9B6BFF" },
+  { id:"art-crayola-watercolor", cat:"art", title:"Crayola Watercolor Paint Set (16 colors)", price:"$4.99", rating:4.8, reviews:"Classroom favorite",
+    desc:"A compact tray of 16 semi-moist watercolor pans with a built-in mixing area.",
+    why:"Rinses off desks and hands easily — a teacher-approved staple.", icon:"watercolor", color:"#4EA1F7" },
+  { id:"art-fiskars-scissors", cat:"art", title:"Fiskars School Scissors", price:"$4.49", rating:4.8, reviews:"Durability pick",
+    desc:"Stainless steel blades with a comfortable grip, sized for student hands.",
+    why:"Stays sharp through a full year of cutting construction paper.", icon:"scissors", color:"#FF6FA5" },
+
+  // TECH
+  { id:"tech-ti84-plus-ce", cat:"tech", title:"TI-84 Plus CE Graphing Calculator", price:"$129.99", rating:4.8, reviews:"Required for most exams",
+    desc:"Full-color display, rechargeable battery, and pre-loaded apps for algebra through calculus.",
+    why:"Approved on the SAT, ACT, and AP exams — won't get flagged at check-in.", icon:"calculator", color:"#2FBF71" },
+  { id:"tech-ipad-10th-gen", cat:"tech", title:"Apple iPad (10th generation)", price:"$349.00", rating:4.7, reviews:"Top-rated student tablet",
+    desc:"A 10.9-inch display, all-day battery, and Apple Pencil support for handwritten notes.",
+    why:"Handwriting directly onto lecture slides cuts down the notebooks you carry.", icon:"tablet", color:"#FF8B3D" },
+  { id:"tech-anker-soundcore", cat:"tech", title:"Anker Soundcore Noise-Cancelling Headphones", price:"$59.99", rating:4.6, reviews:"Library favorite",
+    desc:"Over-ear active noise cancellation with a 40-hour battery for long study sessions.",
+    why:"Blocks out a noisy dorm or library well enough to actually focus.", icon:"headphones", color:"#9B6BFF" },
+  { id:"tech-logitech-m185", cat:"tech", title:"Logitech Wireless Mouse M185", price:"$14.99", rating:4.7, reviews:"Dorm desk staple",
+    desc:"A reliable plug-and-go wireless mouse with a year-long battery life.",
+    why:"Way less wrist strain than a laptop trackpad during long essay sessions.", icon:"mouse", color:"#4EA1F7" },
+  { id:"tech-anker-powercore", cat:"tech", title:"Anker PowerCore Portable Charger", price:"$21.99", rating:4.7, reviews:"Never-dead-phone pick",
+    desc:"A pocket-sized battery pack that can recharge a phone multiple times on one charge.",
+    why:"Keeps your phone alive through a day of back-to-back classes.", icon:"powerbank", color:"#FF6FA5" },
+];
+
+/* ================= Icon library ================= */
+function icon(name, color){
+  const icons = {
+    backpack: `<path d="M30 40 Q30 22 50 22 Q70 22 70 40 L70 45 L30 45 Z" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><rect x="24" y="42" width="52" height="46" rx="12" fill="#fff" stroke="#2B2D42" stroke-width="2.5"/><rect x="38" y="52" width="24" height="20" rx="4" fill="${color}" opacity="0.35" stroke="#2B2D42" stroke-width="2"/><path d="M34 42 L34 30" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/><path d="M66 42 L66 30" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/>`,
+    kanken: `<rect x="22" y="32" width="56" height="52" rx="6" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><rect x="34" y="40" width="32" height="24" rx="3" fill="#fff" opacity="0.5" stroke="#2B2D42" stroke-width="2"/><path d="M28 32 L28 20 Q50 12 72 20 L72 32" fill="none" stroke="#2B2D42" stroke-width="3"/><circle cx="50" cy="76" r="4" fill="#fff" stroke="#2B2D42" stroke-width="2"/>`,
+    backpack2: `<rect x="26" y="34" width="48" height="50" rx="14" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><rect x="36" y="26" width="28" height="16" rx="6" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><rect x="40" y="50" width="20" height="26" rx="4" fill="#fff" opacity="0.4" stroke="#2B2D42" stroke-width="2"/><path d="M30 34 L30 24" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/><path d="M70 34 L70 24" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/>`,
+    backpack3: `<path d="M28 38 Q28 20 50 20 Q72 20 72 38 L72 44 L28 44 Z" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><rect x="22" y="40" width="56" height="48" rx="13" fill="#fff" stroke="#2B2D42" stroke-width="2.5"/><path d="M22 60 L78 60" stroke="${color}" stroke-width="6"/><circle cx="50" cy="80" r="3.5" fill="${color}"/>`,
+    backpack4: `<rect x="25" y="36" width="50" height="50" rx="18" fill="#fff" stroke="#2B2D42" stroke-width="2.5"/><path d="M25 50 L75 50" stroke="${color}" stroke-width="8"/><path d="M25 66 L75 66" stroke="${color}" stroke-width="8"/><path d="M31 36 L31 24" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/><path d="M69 36 L69 24" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/>`,
+    pen: `<rect x="46" y="18" width="8" height="55" rx="4" fill="${color}" stroke="#2B2D42" stroke-width="2.5" transform="rotate(20 50 45)"/><path d="M42 70 L50 90 L58 70 Z" fill="#2B2D42" transform="rotate(20 50 45)"/><rect x="46" y="14" width="8" height="10" fill="#2B2D42" transform="rotate(20 50 45)"/>`,
+    pencil: `<rect x="46" y="14" width="8" height="58" rx="2" fill="#FFD93D" stroke="#2B2D42" stroke-width="2.5" transform="rotate(20 50 45)"/><path d="M42 68 L50 88 L58 68 Z" fill="#D8A24A" stroke="#2B2D42" stroke-width="2" transform="rotate(20 50 45)"/><rect x="46" y="10" width="8" height="8" fill="${color}" transform="rotate(20 50 45)"/>`,
+    pen2: `<rect x="46" y="16" width="8" height="56" rx="4" fill="#fff" stroke="#2B2D42" stroke-width="2.5" transform="rotate(-15 50 45)"/><rect x="46" y="40" width="8" height="16" fill="${color}" transform="rotate(-15 50 45)"/><path d="M42 70 L50 90 L58 70 Z" fill="#2B2D42" transform="rotate(-15 50 45)"/>`,
+    mechpencil: `<rect x="46" y="18" width="8" height="52" rx="3" fill="#e8e8e8" stroke="#2B2D42" stroke-width="2.5" transform="rotate(18 50 45)"/><rect x="46" y="30" width="8" height="14" fill="${color}" transform="rotate(18 50 45)"/><path d="M43 68 L50 84 L57 68 Z" fill="#2B2D42" transform="rotate(18 50 45)"/><rect x="45" y="12" width="10" height="8" fill="${color}" transform="rotate(18 50 45)"/>`,
+    pens60: `<g transform="rotate(-6 50 50)"><rect x="30" y="22" width="6" height="48" fill="#E8615A" stroke="#2B2D42" stroke-width="1.5"/><rect x="42" y="18" width="6" height="52" fill="${color}" stroke="#2B2D42" stroke-width="1.5"/><rect x="54" y="24" width="6" height="46" fill="#3FA772" stroke="#2B2D42" stroke-width="1.5"/><rect x="66" y="20" width="6" height="50" fill="#FFD93D" stroke="#2B2D42" stroke-width="1.5"/></g>`,
+    pencils: `<g transform="rotate(-10 50 50)"><rect x="30" y="20" width="7" height="50" fill="#E8615A" stroke="#2B2D42" stroke-width="2"/><rect x="46" y="20" width="7" height="50" fill="${color}" stroke="#2B2D42" stroke-width="2"/><rect x="62" y="20" width="7" height="50" fill="#FFD93D" stroke="#2B2D42" stroke-width="2"/><path d="M30 70 L33.5 84 L37 70 Z" fill="#D8A24A"/><path d="M46 70 L49.5 84 L53 70 Z" fill="#D8A24A"/><path d="M62 70 L65.5 84 L69 70 Z" fill="#D8A24A"/></g>`,
+    pencils2: `<g transform="rotate(8 50 50)"><rect x="28" y="18" width="8" height="52" fill="${color}" stroke="#2B2D42" stroke-width="2"/><rect x="46" y="18" width="8" height="52" fill="#3FA772" stroke="#2B2D42" stroke-width="2"/><rect x="64" y="18" width="8" height="52" fill="#4E9BE8" stroke="#2B2D42" stroke-width="2"/><path d="M28 70 L32 86 L36 70 Z" fill="#2B2D42"/><path d="M46 70 L50 86 L54 70 Z" fill="#2B2D42"/><path d="M64 70 L68 86 L72 70 Z" fill="#2B2D42"/></g>`,
+    marker: `<rect x="40" y="20" width="20" height="50" rx="4" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><path d="M40 20 L50 8 L60 20 Z" fill="#2B2D42"/><rect x="44" y="70" width="12" height="10" fill="#2B2D42"/>`,
+    watercolor: `<rect x="20" y="34" width="60" height="40" rx="6" fill="#fff" stroke="#2B2D42" stroke-width="2.5"/><circle cx="32" cy="48" r="6" fill="#E8615A" stroke="#2B2D42" stroke-width="1.5"/><circle cx="48" cy="48" r="6" fill="${color}" stroke="#2B2D42" stroke-width="1.5"/><circle cx="64" cy="48" r="6" fill="#3FA772" stroke="#2B2D42" stroke-width="1.5"/><circle cx="32" cy="62" r="6" fill="#FFD93D" stroke="#2B2D42" stroke-width="1.5"/><circle cx="48" cy="62" r="6" fill="#4E9BE8" stroke="#2B2D42" stroke-width="1.5"/><circle cx="64" cy="62" r="6" fill="#FF8B3D" stroke="#2B2D42" stroke-width="1.5"/>`,
+    scissors: `<circle cx="34" cy="70" r="8" fill="none" stroke="${color}" stroke-width="4"/><circle cx="60" cy="70" r="8" fill="none" stroke="${color}" stroke-width="4"/><path d="M40 66 L82 22" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/><path d="M54 66 L82 78" stroke="#2B2D42" stroke-width="4" stroke-linecap="round"/>`,
+    calculator: `<rect x="30" y="16" width="40" height="68" rx="6" fill="#2B2D42"/><rect x="35" y="22" width="30" height="18" rx="2" fill="${color}"/><g fill="#fff"><circle cx="40" cy="50" r="3.5"/><circle cx="50" cy="50" r="3.5"/><circle cx="60" cy="50" r="3.5"/><circle cx="40" cy="60" r="3.5"/><circle cx="50" cy="60" r="3.5"/><circle cx="60" cy="60" r="3.5"/><circle cx="40" cy="70" r="3.5"/><circle cx="50" cy="70" r="3.5"/><circle cx="60" cy="70" r="3.5"/></g>`,
+    tablet: `<rect x="28" y="16" width="44" height="62" rx="6" fill="#2B2D42"/><rect x="32" y="21" width="36" height="48" rx="1" fill="${color}"/><circle cx="50" cy="74" r="2.5" fill="#fff"/>`,
+    headphones: `<path d="M26 55 Q26 24 50 24 Q74 24 74 55" fill="none" stroke="#2B2D42" stroke-width="5" stroke-linecap="round"/><rect x="18" y="50" width="16" height="26" rx="7" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><rect x="66" y="50" width="16" height="26" rx="7" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/>`,
+    mouse: `<rect x="36" y="24" width="28" height="46" rx="14" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><path d="M50 24 L50 44" stroke="#2B2D42" stroke-width="2"/><rect x="47" y="28" width="6" height="12" rx="3" fill="#fff"/>`,
+    powerbank: `<rect x="34" y="18" width="32" height="62" rx="8" fill="${color}" stroke="#2B2D42" stroke-width="2.5"/><rect x="44" y="10" width="12" height="8" rx="2" fill="#2B2D42"/><path d="M52 30 L44 50 L50 50 L48 68 L58 46 L51 46 Z" fill="#FFD93D" stroke="#2B2D42" stroke-width="1.5"/>`,
+  };
+  return `<svg viewBox="0 0 100 100">${icons[name] || ''}</svg>`;
+}
+
+function starRow(rating){
+  let out = '';
+  for(let i=1;i<=5;i++){
+    const fill = i <= Math.round(rating) ? '#FFD93D' : '#e3ddc9';
+    out += `<svg viewBox="0 0 24 24" fill="${fill}" stroke="#2B2D42" stroke-width="1"><polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9.5 9,9"/></svg>`;
+  }
+  return out;
+}
+
+function amazonSearchUrl(title){ return "https://www.amazon.com/s?k=" + encodeURIComponent(title); }
+
+const favorites = new Set();
+
+function renderCard(p){
+  return `
+  <div class="card" data-cat="${p.cat}" data-id="${p.id}">
+    <div class="pin"></div>
+    <button class="fave-btn" data-id="${p.id}" title="Save to favorites">☆</button>
+    <div class="icon-wrap">
+      <img src="img/${p.id}.jpg" alt="${p.title}" loading="lazy"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">${icon(p.icon, p.color)}</div>
+    </div>
+    <h3>${p.title}</h3>
+    <div class="meta-row">
+      <span class="price">${p.price}</span>
+      <span class="stars">${starRow(p.rating)} ${p.rating} · ${p.reviews}</span>
+    </div>
+    <p class="desc">${p.desc}</p>
+    <div class="why-box"><b>Why it's great for school</b>${p.why}</div>
+    <a class="buy-btn" href="${amazonSearchUrl(p.title)}" target="_blank" rel="noopener" data-id="${p.id}">Find it on Amazon →</a>
+  </div>`;
+}
+
+document.querySelectorAll('.category-section[data-cat]:not([data-cat="faves"])').forEach(section=>{
+  const cat = section.dataset.cat;
+  const grid = section.querySelector('.grid');
+  grid.innerHTML = products.filter(p=>p.cat===cat).map(renderCard).join('');
+});
+
+/* ================= Fave buttons ================= */
+function refreshFaveButtons(){
+  document.querySelectorAll('.fave-btn').forEach(btn=>{
+    const id = btn.dataset.id;
+    const on = favorites.has(id);
+    btn.textContent = on ? '★' : '☆';
+    btn.classList.toggle('faved', on);
+  });
+}
+function renderFavesSection(){
+  const grid = document.getElementById('favesGrid');
+  const list = products.filter(p=>favorites.has(p.id));
+  grid.innerHTML = list.map(renderCard).join('');
+  document.getElementById('noFaves').style.display = list.length ? 'none' : 'block';
+  grid.querySelectorAll('.card').forEach(c=>c.classList.add('in-view'));
+  bindDynamicButtons(grid);
+  refreshFaveButtons();
+}
+
+function bindDynamicButtons(scope){
+  scope.querySelectorAll('.fave-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const id = btn.dataset.id;
+      const rect = btn.getBoundingClientRect();
+      if(favorites.has(id)){ favorites.delete(id); }
+      else { favorites.add(id); burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2); sfxPop(); }
+      refreshFaveButtons();
+      if(document.getElementById('favesSection').style.display !== 'none'){ renderFavesSection(); }
+    });
+  });
+  scope.querySelectorAll('.buy-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const rect = btn.getBoundingClientRect();
+      burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+      sfxSuccess();
+    });
+  });
+  scope.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('mouseenter', ()=>sfxClick());
+  });
+}
+bindDynamicButtons(document);
+
+/* ================= Tab filtering ================= */
+const tabs = document.querySelectorAll('.tab-btn');
+const sections = document.querySelectorAll('.category-section');
+tabs.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    sfxClick();
+    tabs.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    sections.forEach(sec=>{
+      if(sec.dataset.cat === 'faves'){
+        sec.style.display = (f === 'faves') ? '' : 'none';
+        if(f === 'faves') renderFavesSection();
+      } else {
+        sec.style.display = (f==='all' || sec.dataset.cat===f) ? '' : 'none';
+      }
+    });
+  });
+});
+
+/* ================= Scroll reveal ================= */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
+}, {threshold:0.12});
+document.querySelectorAll('.card').forEach(c=>io.observe(c));
+
+/* ================= Floating emoji field ================= */
+const emojiList = ["✏️","📚","🎒","📎","🍎","✂️","📐","🖍️","💡","📝","🌟","🎨"];
+const layer = document.getElementById('emoji-layer');
+const floaters = [];
+const COUNT = window.innerWidth < 700 ? 10 : 18;
+for(let i=0;i<COUNT;i++){
+  const el = document.createElement('div');
+  el.className = 'float-emoji';
+  el.textContent = emojiList[i % emojiList.length];
+  layer.appendChild(el);
+  floaters.push({
+    el,
+    baseX: Math.random()*window.innerWidth,
+    baseY: Math.random()*window.innerHeight,
+    ampX: 30 + Math.random()*70,
+    ampY: 20 + Math.random()*55,
+    speedX: 0.2 + Math.random()*0.4,
+    speedY: 0.3 + Math.random()*0.5,
+    phase: Math.random()*Math.PI*2,
+    rotSpeed: (Math.random()-0.5)*0.6,
+    size: 18 + Math.random()*22
+  });
+  el.style.fontSize = floaters[i].size + 'px';
+}
+function animateFloaters(t){
+  const time = t/1000;
+  floaters.forEach(f=>{
+    const x = f.baseX + Math.sin(time*f.speedX + f.phase) * f.ampX;
+    const y = f.baseY + Math.cos(time*f.speedY + f.phase) * f.ampY;
+    const rot = Math.sin(time*f.rotSpeed) * 15;
+    f.el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+  });
+  requestAnimationFrame(animateFloaters);
+}
+requestAnimationFrame(animateFloaters);
+
+/* ================= Hero backpack sway + click bounce ================= */
+const backpackEl = document.getElementById('heroBackpack');
+function swayBackpack(t){
+  const angle = Math.sin(t/700) * 6;
+  const lift = Math.cos(t/900) * 4;
+  backpackEl.style.transform = `rotate(${angle}deg) translateY(${lift}px)`;
+  requestAnimationFrame(swayBackpack);
+}
+requestAnimationFrame(swayBackpack);
+backpackEl.addEventListener('click', (e)=>{
+  const rect = backpackEl.getBoundingClientRect();
+  burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+  sfxSuccess();
+});
+
+/* ================= Wave divider ================= */
+const wavePath = document.getElementById('wavePath');
+function buildWave(t){
+  const w = 1200, mid = 30, amp = 14;
+  let d = `M0 ${mid}`;
+  for(let x=0; x<=w; x+=40){
+    const y = mid + Math.sin((x/120) + t/600) * amp;
+    d += ` L${x} ${y.toFixed(1)}`;
+  }
+  wavePath.setAttribute('d', d);
+  requestAnimationFrame(buildWave);
+}
+requestAnimationFrame(buildWave);
+
+/* ================= Mascot bee: flies a big sine/cosine loop, drops tips ================= */
+const mascotEl = document.getElementById('mascot');
+const bubbleEl = document.getElementById('mascot-bubble');
+const beeSVG = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="55" rx="26" ry="20" fill="#FFD93D" stroke="#2B2D42" stroke-width="3"/>
+  <path d="M28 45 Q50 55 28 65" fill="none" stroke="#2B2D42" stroke-width="6"/>
+  <path d="M40 40 Q50 55 40 70" fill="none" stroke="#2B2D42" stroke-width="6"/>
+  <path d="M52 40 Q62 55 52 70" fill="none" stroke="#2B2D42" stroke-width="6"/>
+  <ellipse cx="72" cy="50" rx="14" ry="10" fill="#fff" stroke="#2B2D42" stroke-width="2" opacity="0.85" transform="rotate(-20 72 50)"/>
+  <ellipse cx="74" cy="62" rx="14" ry="10" fill="#fff" stroke="#2B2D42" stroke-width="2" opacity="0.85" transform="rotate(20 74 62)"/>
+  <circle cx="34" cy="50" r="3" fill="#2B2D42"/>
+</svg>`)}`;
+mascotEl.src = beeSVG;
+
+const tips = [
+  "Psst — the ⭐ saves your favorites!",
+  "Tap 🎵 for a little study jam.",
+  "New semester, fresh pencils. Just saying.",
+  "Scroll down, there's 20 things to see!",
+  "I live inside your browser. Neat, right?",
+  "Sharpen two pencils. Always two."
+];
+let tipIndex = 0;
+function showBubbleNear(x,y){
+  bubbleEl.textContent = tips[tipIndex % tips.length];
+  tipIndex++;
+  bubbleEl.style.left = Math.min(x+40, window.innerWidth-210) + 'px';
+  bubbleEl.style.top = Math.max(y-50, 10) + 'px';
+  bubbleEl.classList.add('show');
+  setTimeout(()=>bubbleEl.classList.remove('show'), 3200);
+}
+
+let lastTip = 0;
+function animateMascot(t){
+  const time = t/1000;
+  const cx = window.innerWidth/2, cy = window.innerHeight*0.35;
+  const rx = Math.min(window.innerWidth*0.4, 420), ry = 140;
+  const x = cx + Math.cos(time*0.15) * rx - 32;
+  const y = cy + Math.sin(time*0.3) * ry - 32;
+  const wingWobble = Math.sin(time*10) * 4;
+  mascotEl.style.transform = `translate(${x}px, ${y}px) rotate(${wingWobble}deg)`;
+  if(t - lastTip > 9000){ lastTip = t; showBubbleNear(x, y); }
+  requestAnimationFrame(animateMascot);
+}
+requestAnimationFrame(animateMascot);
+mascotEl.style.pointerEvents = 'auto';
+mascotEl.style.cursor = 'pointer';
+mascotEl.addEventListener('click', ()=>{
+  const rect = mascotEl.getBoundingClientRect();
+  showBubbleNear(rect.left, rect.top);
+  burstConfetti(rect.left+32, rect.top+32);
+  sfxPop();
+});
+
+window.addEventListener('resize', ()=>{
+  floaters.forEach(f=>{
+    f.baseX = Math.min(f.baseX, window.innerWidth);
+    f.baseY = Math.min(f.baseY, window.innerHeight);
+  });
+});
+</script>
+</body>
+</html>
